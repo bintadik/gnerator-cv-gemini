@@ -210,20 +210,31 @@ def main_content():
         help="Paste the full job description or key requirements"
     )
     
-    # Enhancement mode selector
-    st.subheader("2. Enhancement Mode")
+    # Enhancement mode and Language selector
+    col_enh, col_lang = st.columns([2, 1])
     
-    enhancement_mode = st.radio(
-        "Choose how to enhance your CV:",
-        options=[
-            "🎨 Conservative (Styling Only)",
-            "⚖️ Balanced (Add Relevant Details)", 
-            "🚀 Aggressive (Maximum Impact)"
-        ],
-        index=1,
-        help="Select how aggressively to tailor your CV for this job",
-        horizontal=True
-    )
+    with col_enh:
+        st.subheader("2. Enhancement Mode")
+        enhancement_mode = st.radio(
+            "Choose how to enhance your CV:",
+            options=[
+                "🎨 Conservative (Styling Only)",
+                "⚖️ Balanced (Add Relevant Details)", 
+                "🚀 Aggressive (Maximum Impact)"
+            ],
+            index=1,
+            help="Select how aggressively to tailor your CV for this job",
+            horizontal=True
+        )
+    
+    with col_lang:
+        st.subheader("3. Output Language")
+        output_language = st.selectbox(
+            "Select language:",
+            options=["English", "Bahasa Indonesia"],
+            index=0,
+            help="Select the language for the generated content"
+        )
     
     # Show description based on selected mode
     if "Conservative" in enhancement_mode:
@@ -273,7 +284,8 @@ def main_content():
                         job_description,
                         company_name,
                         latex_template=template,
-                        enhancement_mode=enhancement_mode
+                        enhancement_mode=enhancement_mode,
+                        language=output_language
                     )
                     
                     st.session_state.generated_latex = latex_code
@@ -309,7 +321,8 @@ def main_content():
                     cover_letter = st.session_state.gemini_client.generate_cover_letter(
                         st.session_state.cv_text,
                         full_job_desc,
-                        company_name
+                        company_name,
+                        language=output_language
                     )
                     
                     st.session_state.generated_cover_letter = cover_letter
