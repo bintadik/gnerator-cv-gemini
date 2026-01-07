@@ -19,7 +19,7 @@ An AI-powered web application that generates tailored CVs/resumes and cover lett
    - **Windows**: [MiKTeX](https://miktex.org/download)
    - **macOS**: [MacTeX](https://www.tug.org/mactex/)
    - **Linux**: TeX Live (`sudo apt-get install texlive-full`)
-4. **Gemini API Key**: Get from [Google AI Studio](https://makersuite.google.com/app/apikey)
+4. **Gemini API Key**: Get from [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ## Local Installation
 

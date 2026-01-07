@@ -81,8 +81,10 @@ def setup_sidebar():
             "Gemini API Key",
             type="password",
             value=os.getenv('GEMINI_API_KEY', ''),
-            help="Enter your Google Gemini API key. Get one at https://makersuite.google.com/app/apikey"
+            help="Enter your Google Gemini API key."
         )
+        
+        st.markdown("[🔗 Get your free Gemini API Key here](https://aistudio.google.com/app/apikey)")
         
         if api_key:
             try:
