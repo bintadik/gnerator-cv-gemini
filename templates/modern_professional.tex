@@ -1,0 +1,97 @@
+\documentclass[10pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+% Define colors
+\definecolor{primarycolor}{RGB}{31, 119, 180}
+\definecolor{secondarycolor}{RGB}{100, 100, 100}
+
+% Formatting
+\titleformat{\section}{\Large\bfseries\color{primarycolor}}{}{0em}{}[\color{primarycolor}\titlerule]
+\titleformat{\subsection}{\large\bfseries}{}{0em}{}
+\setlist[itemize]{leftmargin=*,noitemsep,topsep=3pt}
+
+\pagestyle{empty}
+\hypersetup{colorlinks=true, urlcolor=primarycolor}
+
+\begin{document}
+
+% Header with color
+\begin{center}
+    {\Huge \textbf{\color{primarycolor}[First Name] [Last Name]}}\\[0.3em]
+    {\large \textit{[Professional Title]}}\\[0.5em]
+    \color{secondarycolor}
+    [Email] $\cdot$ [Phone] $\cdot$ \href{[LinkedIn URL]}{LinkedIn} $\cdot$ \href{[GitHub URL]}{GitHub}\\
+    [City, State] $\cdot$ [Country]
+\end{center}
+
+\vspace{0.5em}
+
+\section{Professional Summary}
+[Brief professional summary highlighting key qualifications and career objectives. Focus on value proposition and unique strengths.]
+
+\section{Professional Experience}
+
+\subsection{[Job Title] $\cdot$ [Company Name] \hfill \textit{[Start Date] -- [End Date]}}
+\textcolor{secondarycolor}{\textit{[Location]}}
+\begin{itemize}
+    \item [Quantifiable achievement with metrics and impact]
+    \item [Key responsibility demonstrating leadership or technical expertise]
+    \item [Notable accomplishment or project contribution]
+    \item [Additional relevant achievement]
+\end{itemize}
+
+\subsection{[Job Title] $\cdot$ [Company Name] \hfill \textit{[Start Date] -- [End Date]}}
+\textcolor{secondarycolor}{\textit{[Location]}}
+\begin{itemize}
+    \item [Quantifiable achievement with metrics and impact]
+    \item [Key responsibility demonstrating leadership or technical expertise]
+    \item [Notable accomplishment or project contribution]
+\end{itemize}
+
+\section{Education}
+
+\subsection{[Degree] $\cdot$ [Institution] \hfill \textit{[Graduation Year]}}
+\textcolor{secondarycolor}{\textit{[Location]}}\\
+GPA: [X.XX/4.0] $\cdot$ [Honors, Dean's List, etc.]\\
+Relevant Coursework: [Course 1], [Course 2], [Course 3]
+
+\section{Technical Skills}
+
+\begin{itemize}[leftmargin=0pt]
+    \item \textbf{Programming:} [Languages and proficiency levels]
+    \item \textbf{Frameworks \& Libraries:} [Relevant frameworks]
+    \item \textbf{Tools \& Platforms:} [Development tools, cloud platforms]
+    \item \textbf{Databases:} [Database technologies]
+    \item \textbf{Other:} [Additional technical skills]
+\end{itemize}
+
+\section{Key Projects}
+
+\subsection{[Project Name] \hfill \textit{[Date]}}
+\begin{itemize}
+    \item [Brief description of project scope and your role]
+    \item [Technologies used and technical challenges solved]
+    \item [Impact or results achieved]
+\end{itemize}
+
+\subsection{[Project Name] \hfill \textit{[Date]}}
+\begin{itemize}
+    \item [Brief description of project scope and your role]
+    \item [Technologies used and technical challenges solved]
+\end{itemize}
+
+\section{Certifications \& Awards}
+
+\begin{itemize}[leftmargin=0pt]
+    \item \textbf{[Certification Name]} --- [Issuing Organization], [Year]
+    \item \textbf{[Award Name]} --- [Description], [Year]
+\end{itemize}
+
+\end{document}
