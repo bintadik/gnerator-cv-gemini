@@ -13,6 +13,7 @@ from pathlib import Path
 from utils.cv_parser import parse_cv
 from utils.gemini_client import GeminiClient
 from utils.latex_handler import read_latex_template, compile_latex_to_pdf, save_latex_file
+from utils.analytics import inject_ga4
 
 
 # Page configuration
@@ -177,20 +178,35 @@ def main_content():
         uploaded_file = st.file_uploader(
             "Choose your CV/Resume file",
             type=['pdf', 'docx', 'txt'],
-            help="Upload your current CV in PDF, DOCX, or TXT format"
+            help="Upload your current CV in PDF, DOCX, or TXT format",
+            key="cv_uploader"
         )
         
         if uploaded_file:
-            with st.spinner("Parsing CV..."):
-                cv_text = parse_cv(uploaded_file)
-                if cv_text:
-                    st.session_state.cv_text = cv_text
-                    st.success(f"✅ CV parsed successfully ({len(cv_text)} characters)")
-                    
-                    with st.expander("View extracted text"):
-                        st.text_area("CV Content", cv_text, height=150, disabled=True, key="cv_preview")
-                else:
-                    st.error("❌ Failed to parse CV. Please check the file format.")
+            # Check if we already have this file parsed
+            file_identifier = f"{uploaded_file.name}_{uploaded_file.size}"
+            if st.session_state.get('last_parsed_file') != file_identifier:
+                with st.spinner("Parsing CV..."):
+                    try:
+                        cv_text = parse_cv(uploaded_file)
+                        if cv_text and len(cv_text.strip()) > 0:
+                            st.session_state.cv_text = cv_text
+                            st.session_state.last_parsed_file = file_identifier
+                            st.success(f"✅ CV parsed successfully ({len(cv_text)} characters)")
+                        else:
+                            st.error("❌ Failed to extract text from CV. The file might be empty, encrypted, or contain only images.")
+                            st.session_state.cv_text = None
+                    except Exception as e:
+                        st.error(f"❌ Error during CV parsing: {str(e)}")
+                        st.session_state.cv_text = None
+            
+            if st.session_state.cv_text:
+                with st.expander("View extracted text"):
+                    st.text_area("CV Content", st.session_state.cv_text, height=150, disabled=True, key="cv_preview")
+        else:
+            # Clear state if file is removed
+            st.session_state.cv_text = None
+            st.session_state.last_parsed_file = None
     
     with col2:
         company_name = st.text_input(
@@ -439,6 +455,9 @@ def main():
     """Main application function."""
     # Initialize session state
     initialize_session_state()
+    
+    # Inject GA4 tracking
+    inject_ga4()
     
     # Header
     st.markdown('<div class="main-header">📄 CV/Cover Letter Generator</div>', unsafe_allow_html=True)

@@ -32,12 +32,13 @@ def parse_cv(uploaded_file) -> Optional[str]:
             return None
             
     except Exception as e:
-        print(f"Error parsing CV: {e}")
-        return None
+        # Re-raise to let the UI handle the error message
+        raise Exception(f"Error parsing {file_extension} file: {str(e)}")
 
 
 def parse_pdf(uploaded_file) -> str:
     """Extract text from PDF file."""
+    uploaded_file.seek(0)
     pdf_reader = PyPDF2.PdfReader(io.BytesIO(uploaded_file.read()))
     text = ""
     
@@ -49,6 +50,7 @@ def parse_pdf(uploaded_file) -> str:
 
 def parse_docx(uploaded_file) -> str:
     """Extract text from DOCX file."""
+    uploaded_file.seek(0)
     doc = Document(io.BytesIO(uploaded_file.read()))
     text = ""
     
@@ -60,4 +62,5 @@ def parse_docx(uploaded_file) -> str:
 
 def parse_txt(uploaded_file) -> str:
     """Extract text from TXT file."""
+    uploaded_file.seek(0)
     return uploaded_file.read().decode('utf-8').strip()
