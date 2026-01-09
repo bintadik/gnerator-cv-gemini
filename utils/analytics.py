@@ -23,7 +23,15 @@ def inject_ga4():
             window.dataLayer = window.dataLayer || [];
             function gtag(){{dataLayer.push(arguments);}}
             gtag('js', new Date());
-            gtag('config', '{measurement_id}');
+            
+            // Explicitly set page location from parent window
+            gtag('config', '{measurement_id}', {{
+                'page_path': window.parent.location.pathname,
+                'page_location': window.parent.location.href,
+                'send_page_view': true
+            }});
+
+            console.log('✅ GA4 Initialized with ID: {measurement_id}');
 
             // Set to keep track of already tracked status messages to avoid duplicates
             const trackedStatuses = new Set();
@@ -51,9 +59,12 @@ def inject_ga4():
                                 eventName = 'generate_cl_click';
                             }}
                             
+                            console.log('📊 GA4 tracking event:', eventName, {{ 'button_name': buttonText }});
+                            
                             gtag('event', eventName, {{
                                 'button_name': buttonText,
-                                'page_path': window.parent.location.pathname
+                                'page_path': window.parent.location.pathname,
+                                'page_location': window.parent.location.href
                             }});
                         }});
                         button.setAttribute('data-ga-tracked', 'true');
@@ -70,8 +81,6 @@ def inject_ga4():
                     if (!alertText) return;
 
                     // Generate a unique key for this message instance
-                    // We use the text and a rounded timestamp to allow re-tracking if the same error happens much later,
-                    // but prevent double-tracking during a single render cycle.
                     const messageKey = alertText + "_" + Math.floor(Date.now() / 5000); 
 
                     if (!trackedStatuses.has(messageKey)) {{
@@ -89,15 +98,18 @@ def inject_ga4():
                             eventName = 'generate_cl_success';
                         }}
 
+                        console.log('📊 GA4 tracking status:', eventName, {{ 'type': statusType, 'msg': alertText.substring(0, 30) }});
+
                         gtag('event', eventName, {{
                             'status_type': statusType,
-                            'status_message': alertText.substring(0, 100), // Truncate for GA4 limits
-                            'page_path': window.parent.location.pathname
+                            'status_message': alertText.substring(0, 100),
+                            'page_path': window.parent.location.pathname,
+                            'page_location': window.parent.location.href
                         }});
 
                         trackedStatuses.add(messageKey);
                         
-                        // Clean up set occasionally to prevent memory leak in long sessions
+                        // Clean up set occasionally
                         if (trackedStatuses.size > 100) {{
                             const firstItem = trackedStatuses.values().next().value;
                             trackedStatuses.delete(firstItem);
