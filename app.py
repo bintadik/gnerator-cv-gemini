@@ -13,7 +13,6 @@ from pathlib import Path
 from utils.cv_parser import parse_cv
 from utils.gemini_client import GeminiClient
 from utils.latex_handler import read_latex_template, compile_latex_to_pdf, save_latex_file
-from utils.analytics import inject_ga4
 
 
 # Page configuration
@@ -455,9 +454,6 @@ def main():
     """Main application function."""
     # Initialize session state
     initialize_session_state()
-    
-    # Inject GA4 tracking
-    inject_ga4()
     
     # Header
     st.markdown('<div class="main-header">📄 CV/Cover Letter Generator</div>', unsafe_allow_html=True)
