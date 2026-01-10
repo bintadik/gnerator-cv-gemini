@@ -7,7 +7,20 @@ using Google's Gemini API.
 
 import os
 import streamlit as st
+import re
 from pathlib import Path
+from datetime import datetime
+
+
+def sanitize_filename(name):
+    """Sanitize a string to be used as a filename."""
+    if not name:
+        return ""
+    # Remove non-alphanumeric (except underscores and hyphens)
+    name = re.sub(r'[^\w\s-]', '', name)
+    # Replace spaces and hyphens with underscores
+    name = re.sub(r'[-\s]+', '_', name)
+    return name.strip('_')
 
 # Import utility modules
 from utils.cv_parser import parse_cv
@@ -227,6 +240,16 @@ def main_content():
         help="Paste the full job description or key requirements"
     )
     
+    # Prepare base filename for downloads
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    clean_company = sanitize_filename(company_name) if company_name else "Company"
+    clean_job = sanitize_filename(job_title) if job_title else ""
+    
+    base_filename = clean_company
+    if clean_job:
+        base_filename += f"_{clean_job}"
+    base_filename += f"_{timestamp}"
+    
     # Enhancement mode and Language selector
     col_enh, col_lang = st.columns([2, 1])
     
@@ -379,7 +402,7 @@ def main_content():
             st.download_button(
                 label="📥 Download .tex",
                 data=st.session_state.generated_latex,
-                file_name="cv.tex",
+                file_name=f"{base_filename}.tex",
                 mime="text/plain",
                 use_container_width=True
             )
@@ -400,7 +423,7 @@ def main_content():
                 st.download_button(
                     label="📥 Download PDF",
                     data=st.session_state.pdf_bytes,
-                    file_name="cv.pdf",
+                    file_name=f"{base_filename}.pdf",
                     mime="application/pdf",
                     use_container_width=True
                 )
@@ -432,7 +455,7 @@ def main_content():
             st.download_button(
                 label="📋 Download as .txt",
                 data=st.session_state.generated_cover_letter,
-                file_name="cover_letter.txt",
+                file_name=f"{base_filename}.txt",
                 mime="text/plain",
                 use_container_width=True
             )
@@ -441,7 +464,7 @@ def main_content():
             st.download_button(
                 label="📥 Download as .docx",
                 data=st.session_state.generated_cover_letter,
-                file_name="cover_letter.docx",
+                file_name=f"{base_filename}.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 use_container_width=True,
                 help="Note: This is plain text. Open in Word and format as needed."
