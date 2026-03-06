@@ -1,0 +1,307 @@
+% ============================================================
+%  AI-READY CV TEMPLATE  •  Enhanced & Debugged
+%  Compatible with: pdflatex (TeX Live 2020+)
+%  Last verified: 2025
+% ============================================================
+%
+%  ██████████████████████████████████████████████████████
+%  █  HOW TO USE THIS TEMPLATE WITH AN AI (e.g. Claude) █
+%  ██████████████████████████████████████████████████████
+%
+%  STEP 1 — Paste this entire file into your AI prompt.
+%  STEP 2 — Include the candidate's information in this format:
+%
+%    NAME: Jane Smith
+%    PHONE: +1-555-9876
+%    EMAIL: jane@email.com
+%    LINKEDIN: linkedin.com/in/janesmith
+%    WEBSITE: janesmith.dev
+%
+%    SUMMARY: Results-driven software engineer with 7 years ...
+%
+%    SKILLS:
+%      Technical: Python, React, AWS, Docker, Kubernetes, SQL
+%      Interpersonal: Agile Leadership, Mentoring, Public Speaking
+%
+%    EXPERIENCE:
+%      [Job 1]
+%        Title: Senior Software Engineer
+%        Company: Acme Corp
+%        Location: Austin, TX
+%        Dates: Mar 2020 – Present
+%        Bullets:
+%          - Built X that did Y resulting in Z% improvement
+%          - Led team of N people to accomplish W
+%
+%      [Job 2]  ... (repeat as needed)
+%
+%    EDUCATION:
+%      Degree: B.S. Computer Science
+%      School: State University
+%      Details: GPA 3.9/4.0
+%      Graduated: May 2017
+%
+%    CERTIFICATIONS & PROJECTS:
+%      - AWS Solutions Architect – Associate (Amazon)
+%      - Built open-source CLI tool with 500+ GitHub stars
+%
+%  STEP 3 — Tell the AI: "Fill in the template with this data
+%            and output the complete .tex source."
+%
+%  ──────────────────────────────────────────────────────
+%  TEMPLATE DESIGN PRINCIPLES (for AI awareness)
+%  ──────────────────────────────────────────────────────
+%  • F-Pattern layout  : eye tracks Top → Right → Down
+%  • BOX RULE          : each section is a visual block
+%  • PRAQ bullet rule  : Purpose, Result, Action, Quantify
+%  • ATS-friendly      : no tables for layout, clean text
+%  • One page default  : adjust \vspace / remove sections
+%  ──────────────────────────────────────────────────────
+
+% ============================================================
+%  DOCUMENT CLASS & PAGE SETUP
+% ============================================================
+\documentclass[10pt, letterpaper]{article}
+
+% --- Core packages ---
+\usepackage[utf8]{inputenc}          % UTF-8 source encoding
+\usepackage[T1]{fontenc}             % Output font encoding (better PDF)
+\usepackage[
+  top=0.65in,
+  bottom=0.65in,
+  left=0.75in,
+  right=0.75in
+]{geometry}                          % Page margins — adjust to fit content
+
+% --- Typography ---
+\usepackage[expansion=false]{microtype}               % Subtle kerning/spacing improvements
+
+% --- Layout helpers ---
+\usepackage{titlesec}                % Section heading control
+\usepackage{enumitem}                % Fine-grained list control
+\usepackage{array}                   % Better table column types
+\usepackage{tabularx}                % Auto-width table columns
+\usepackage{parskip}                 % Space between paragraphs instead of indent
+
+% --- Colors & links ---
+\usepackage{xcolor}                  % Named colors
+\usepackage[
+  hidelinks,                         % Remove colored/boxed link borders
+  pdftitle={CV},
+  pdfauthor={Candidate Name}
+]{hyperref}                          % Clickable links in PDF output
+
+% --- Icons (marvosym — no external fonts needed) ---
+\usepackage{marvosym}                % \Mobilefone, \Letter, \Mundus etc.
+
+% ============================================================
+%  COLOR PALETTE  (change these 3 lines to restyle the CV)
+% ============================================================
+\definecolor{cvblack}{RGB}{15, 15, 15}      % Main text
+\definecolor{cvgray}{RGB}{75, 75, 75}       % Secondary text / dates
+\definecolor{cvrule}{RGB}{0, 0, 0}          % Section rule color
+
+% ============================================================
+%  SECTION FORMATTING  (BOX RULE)
+% ============================================================
+% Large, bold, ALL-CAPS heading + a full-width horizontal rule
+\titleformat{\section}
+  {\large\bfseries\color{cvblack}}            % font style
+  {}                                          % label
+  {0em}                                       % sep
+  {\MakeUppercase}                            % before-code
+  [\color{cvrule}\titlerule]                  % after-code (the rule)
+
+\titlespacing{\section}
+  {0pt}   % left indent
+  {10pt}  % space above
+  {6pt}   % space below
+
+% No section numbers anywhere
+\setcounter{secnumdepth}{0}
+
+% ============================================================
+%  LIST FORMATTING  (PRAQ bullets)
+% ============================================================
+\setlist[itemize]{
+  leftmargin = 1.4em,
+  nosep,                             % no extra spacing between items
+  before     = \vspace{3pt},
+  after      = \vspace{3pt},
+  label      = \textbullet
+}
+
+% ============================================================
+%  CUSTOM COMMANDS
+% ============================================================
+
+% \experienceItem{Title}{Date Range}{Company}{Location}
+% Produces two-line entry header with right-aligned metadata
+\newcommand{\experienceItem}[4]{%
+  \vspace{4pt}%
+  \noindent
+  \begin{tabularx}{\linewidth}{@{} X r @{}}
+    \textbf{\color{cvblack}#1} & \textcolor{cvgray}{#2} \\
+    \textit{\color{cvgray}#3}  & \textit{\textcolor{cvgray}{#4}}
+  \end{tabularx}%
+  \vspace{2pt}%
+}
+
+% \cvlink{url}{display text} — consistent hyperlink styling
+\newcommand{\cvlink}[2]{\href{#1}{\textcolor{cvblack}{#2}}}
+
+% Horizontal spacer used in header contact line
+\newcommand{\sep}{\quad\textbar\quad}
+
+% ============================================================
+%  SUPPRESS PARAGRAPH INDENT GLOBALLY
+% ============================================================
+\setlength{\parindent}{0pt}
+
+% ============================================================
+%  DOCUMENT BEGIN
+% ============================================================
+\begin{document}
+
+\pagestyle{empty}  % No page numbers
+
+% ============================================================
+%  SECTION 1: HEADER  (F-Pattern: top horizontal scan)
+% ============================================================
+%  AI INSTRUCTION: Replace every value between { } below.
+%  Keep the \sep separators between contact items.
+%  Add or remove contact items as needed.
+% ============================================================
+
+\begin{center}
+  {\Huge\bfseries\color{cvblack} JOHN DOE}\\[5pt]
+  \small\color{cvgray}
+  \Mobilefone\ +1-555-0123
+  \sep
+  \Letter\ \cvlink{mailto:john.doe@email.com}{john.doe@email.com}
+  \sep
+  \Mundus\ \cvlink{https://linkedin.com/in/johndoe}{linkedin.com/in/johndoe}
+  \sep
+  \cvlink{https://johndoe.me}{johndoe.me}
+\end{center}
+
+\vspace{2pt}
+
+% ============================================================
+%  SECTION 2: PROFESSIONAL SUMMARY
+% ============================================================
+%  AI INSTRUCTION: 2–4 sentences. Lead with years of
+%  experience + domain. End with a specific value-add.
+%  Avoid first-person pronouns ("I", "my").
+% ============================================================
+
+\section{Professional Summary}
+Results-driven Marketing Specialist with 5+ years of experience driving measurable growth through data-informed strategy. Proven record of leading cross-functional teams and optimizing digital campaigns across multiple channels. Adept at translating complex analytics into clear action plans that improve brand engagement and reduce acquisition costs.
+
+% ============================================================
+%  SECTION 3: SKILLS
+% ============================================================
+%  AI INSTRUCTION: Use two rows — Technical and Interpersonal.
+%  List 6–10 skills per row, comma-separated.
+%  Keep the tabular structure unchanged.
+% ============================================================
+
+\section{Skills}
+\begin{tabular}{@{} >{\bfseries\color{cvblack}}l @{\hspace{0.6em}} l @{}}
+  Technical:     & SEO/SEM, Google Analytics, Python, SQL, Adobe Creative Suite, Salesforce CRM \\[2pt]
+  Interpersonal: & Project Management, Public Speaking, Cross-functional Leadership, Negotiation \\
+\end{tabular}
+
+% ============================================================
+%  SECTION 4: WORK EXPERIENCE  (PRAQ Rule)
+% ============================================================
+%  AI INSTRUCTION FOR EACH BULLET:
+%    P = Purpose  — what goal/context the action served
+%    R = Result   — the measurable outcome (%, $, time saved)
+%    A = Action   — strong past-tense verb (Led, Built, Reduced)
+%    Q = Quantify — number whenever possible
+%
+%  Template bullet pattern:
+%    \item \textbf{Action verb} [what you did] (Purpose) that
+%          \textbf{Quantified result}.
+%
+%  Add/remove \experienceItem blocks as needed.
+%  Most recent job comes first.
+% ============================================================
+
+\section{Work Experience}
+
+% --- Job 1 (most recent) ---
+\experienceItem%
+  {Senior Marketing Manager}   % Job title
+  {Jan 2021 -- Present}        % Date range
+  {Global Tech Solutions}      % Company name
+  {New York, NY}               % Location
+
+\begin{itemize}
+  \item \textbf{Developed and executed} a multi-channel social media strategy targeting Gen-Z professionals that \textbf{increased engagement by 35\%} within 6 months.
+  \item \textbf{Led} a team of 5 creatives to overhaul the company blog, generating a \textbf{20\% lift in organic traffic} and 500+ new weekly leads.
+  \item \textbf{Optimised} a \$200k annual advertising budget through A/B testing and audience segmentation, \textbf{reducing Cost-Per-Acquisition by 15\%}.
+\end{itemize}
+
+% --- Job 2 ---
+\experienceItem%
+  {Marketing Coordinator}
+  {June 2018 -- Dec 2020}
+  {Startup Inc.}
+  {San Francisco, CA}
+
+\begin{itemize}
+  \item \textbf{Implemented} an automated email marketing sequence that boosted open rates by \textbf{12\%} and contributed \textbf{\$50k in additional Q3 revenue}.
+  \item \textbf{Managed} 50+ daily customer inquiries while overseeing community outreach, achieving a consistent \textbf{95\% satisfaction score}.
+  \item \textbf{Designed} 10+ high-converting landing pages in HTML/CSS, \textbf{improving lead conversion by 8\%}.
+\end{itemize}
+
+% ============================================================
+%  SECTION 5: EDUCATION
+% ============================================================
+%  AI INSTRUCTION: One entry per degree. Include GPA only
+%  if ≥ 3.5. Omit graduation year if > 10 years ago.
+% ============================================================
+
+\section{Education}
+
+\vspace{2pt}
+\noindent
+\begin{tabularx}{\linewidth}{@{} X r @{}}
+  \textbf{Bachelor of Science in Business Administration} & \textcolor{cvgray}{Graduated May 2018} \\
+  \textit{\textcolor{cvgray}{University of Excellence — Major: Marketing}} & \textit{\textcolor{cvgray}{GPA: 3.8 / 4.0}}
+\end{tabularx}
+
+% ============================================================
+%  SECTION 6: CERTIFICATIONS & PROJECTS
+% ============================================================
+%  AI INSTRUCTION: List up to 4 items.
+%  Format: \item \textbf{Name} -- Issuing body / brief impact.
+%  For projects, include tech stack and a result if possible.
+% ============================================================
+
+\section{Certifications \& Projects}
+
+\begin{itemize}
+  \item \textbf{Google Ads Search Certification} -- Issued by Google Digital Academy (2023)
+  \item \textbf{Project Management Professional (PMP)} -- Issued by Project Management Institute
+  \item \textbf{Market Trend Dashboard} -- Personal project: Python (pandas, Plotly) data dashboard visualising real-estate market trends; used by 3 local agencies.
+\end{itemize}
+
+\end{document}
+
+% ============================================================
+%  COMPILATION INSTRUCTIONS
+% ============================================================
+%  Run twice to resolve cross-references:
+%    pdflatex cv_template.tex
+%    pdflatex cv_template.tex
+%
+%  Required LaTeX packages (all in TeX Live / MiKTeX):
+%    lmodern, microtype, geometry, titlesec, enumitem,
+%    array, tabularx, parskip, xcolor, hyperref, marvosym
+%
+%  To install missing packages:
+%    tlmgr install <package-name>
+% ============================================================
