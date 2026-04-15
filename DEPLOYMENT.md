@@ -63,23 +63,57 @@ Same format as .env but configured in the cloud UI
 
 ## Troubleshooting
 
+### "Error installing requirements"
+
+**Solution:**
+1. Check the **terminal logs** in Streamlit Cloud (Settings → Manage account → Logs)
+2. This has been fixed by:
+   - Using `requires-python = ">=3.9"` (supports more environments)
+   - Removed Windows-specific packages from `pyproject.toml`
+   - Using flexible version constraints in `requirements.txt`
+
+**If error persists:**
+1. Delete the app and redeploy
+2. Check that `requirements.txt` only has these valid packages:
+   ```
+   streamlit>=1.31.0
+   google-generativeai>=0.3.0
+   python-dotenv>=1.0.0
+   pypdf2>=3.0.0
+   python-docx>=1.1.0
+   openai>=1.0.0
+   ```
+3. Use the **Diagnostics** page (see below)
+
 ### "Module not found" Error
 - Check `requirements.txt` has all dependencies
 - Wait 2-3 minutes for Streamlit Cloud to install packages
 - Click "Rerun" button in the app
+- Visit `/pages/99_diagnostics` to check what's installed
 
 ### "API Key not found" Error
 - Verify secrets are added in Streamlit Cloud Settings
-- Use lowercase key names: `gemini_api_key`, not `GEMINI_API_KEY`
+- **Use lowercase key names:** `gemini_api_key`, not `GEMINI_API_KEY`
 - Wait for app to restart after adding secrets
 
 ### LaTeX Compilation Error
 - The `packages.txt` file automatically installs LaTeX on Streamlit Cloud
-- If error persists, wait 2-3 minutes for system packages to install
+- If error persists:
+  1. Wait 2-3 minutes for system packages to install
+  2. Visit `/pages/99_diagnostics` to check LaTeX status
 
 ### OpenRouter Not Working
 - Verify `openrouter_api_key` is set in Streamlit Cloud Secrets
 - Check API key is valid at https://openrouter.ai/keys
+
+## Built-in Diagnostics
+
+Visit your app at `/pages/99_diagnostics` to check:
+- ✓ Python version
+- ✓ All installed packages
+- ✓ API configuration status
+- ✓ LaTeX installation status
+- ✓ Module imports
 
 ## Files for Cloud Deployment
 
