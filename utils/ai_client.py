@@ -5,12 +5,31 @@ Supports multiple providers: Google Gemini and OpenRouter.
 
 import os
 from typing import Optional
-import google.generativeai as genai
-from openai import OpenAI
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Import handling for cloud deployment
+try:
+    import streamlit as st
+
+    HAS_STREAMLIT = True
+except ImportError:
+    HAS_STREAMLIT = False
+
+try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
+
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    pass
 
 
 class AIClient:
@@ -54,21 +73,49 @@ class AIClient:
             model = self.FREE_MODELS[self.provider][0]
         self.model = model
 
-        # Set API key
+        # Set API key with Streamlit Cloud secrets support
         if self.provider == "google":
-            self.api_key = api_key or os.getenv("GEMINI_API_KEY")
+            # Try Streamlit secrets first (for Cloud deployment)
+            if HAS_STREAMLIT:
+                try:
+                    self.api_key = (
+                        api_key
+                        or st.secrets.get("gemini_api_key")
+                        or os.getenv("GEMINI_API_KEY")
+                    )
+                except Exception:
+                    self.api_key = api_key or os.getenv("GEMINI_API_KEY")
+            else:
+                self.api_key = api_key or os.getenv("GEMINI_API_KEY")
+
             if not self.api_key:
                 raise ValueError(
-                    "Gemini API key not found. Set GEMINI_API_KEY environment variable."
+                    "Gemini API key not found. Set GEMINI_API_KEY environment variable or Streamlit secrets."
                 )
+            if genai is None:
+                raise ImportError("google-generativeai package not installed")
             genai.configure(api_key=self.api_key)
             self.client = genai.GenerativeModel(self.model)
         elif self.provider == "openrouter":
-            self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
+            # Try Streamlit secrets first (for Cloud deployment)
+            if HAS_STREAMLIT:
+                try:
+                    self.api_key = (
+                        api_key
+                        or st.secrets.get("openrouter_api_key")
+                        or os.getenv("OPENROUTER_API_KEY")
+                    )
+                except Exception:
+                    self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
+            else:
+                self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
+
             if not self.api_key:
                 raise ValueError(
-                    "OpenRouter API key not found. Set OPENROUTER_API_KEY environment variable."
+                    "OpenRouter API key not found. Set OPENROUTER_API_KEY environment variable or Streamlit secrets."
                 )
+            if OpenAI is None:
+                raise ImportError("openai package not installed")
             self.client = OpenAI(
                 base_url="https://openrouter.ai/api/v1",
                 api_key=self.api_key,
