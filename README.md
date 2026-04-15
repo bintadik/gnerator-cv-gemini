@@ -110,7 +110,7 @@ cv-coverletter-generator/
 ├── utils/
 │   ├── cv_parser.py               # CV/resume parsing utilities
 │   ├── latex_handler.py           # LaTeX compilation and handling
-│   └── gemini_client.py           # Gemini API integration
+│   └── ai_client.py               # AI provider integration (Google Gemini & OpenRouter)
 ├── templates/
 │   ├── cv_template.tex            # Default CV LaTeX template
 │   └── cover_letter_template.txt  # Cover letter generation guide
@@ -123,9 +123,19 @@ cv-coverletter-generator/
 
 ## Configuration
 
-### Gemini API Settings
+### AI Provider Settings
 
-The application uses the Gemini 2.5 Flash model. You can modify the model in `utils/gemini_client.py`.
+The application supports multiple AI providers:
+
+- **Google Gemini**: Free models like `gemini-1.5-flash` and `gemini-2.5-flash`
+- **OpenRouter**: Access to various free models including Llama, Claude, and others
+
+You can select the provider and model through the sidebar in the Streamlit app. The default is Google Gemini with `gemini-2.5-flash`.
+
+### API Keys
+
+- **Google Gemini**: Set `GEMINI_API_KEY` environment variable or enter manually
+- **OpenRouter**: Set `OPENROUTER_API_KEY` environment variable or enter manually
 
 ### LaTeX Templates
 

@@ -25,7 +25,7 @@ def sanitize_filename(name):
 
 # Import utility modules
 from utils.cv_parser import parse_cv
-from utils.gemini_client import GeminiClient
+from utils.ai_client import AIClient
 from utils.latex_handler import (
     read_latex_template,
     compile_latex_to_pdf,
@@ -88,24 +88,76 @@ def initialize_session_state():
         st.session_state.generated_latex = None
     if "generated_cover_letter" not in st.session_state:
         st.session_state.generated_cover_letter = None
-    if "gemini_client" not in st.session_state:
-        st.session_state.gemini_client = None
+    if "ai_client" not in st.session_state:
+        st.session_state.ai_client = None
     if "use_env_api_key" not in st.session_state:
-        st.session_state.use_env_api_key = bool(os.getenv("GEMINI_API_KEY"))
+        st.session_state.use_env_api_key = bool(
+            os.getenv("GEMINI_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+        )
     if "manual_api_key" not in st.session_state:
         st.session_state.manual_api_key = ""
+    if "selected_provider" not in st.session_state:
+        st.session_state.selected_provider = "google"
+    if "selected_model" not in st.session_state:
+        st.session_state.selected_model = "gemini-2.5-flash"
 
 
 def setup_sidebar():
-    """Setup sidebar with API key configuration."""
+    """Setup sidebar with API key configuration and model selection."""
     with st.sidebar:
         st.header("⚙️ Configuration")
+
+        # AI Provider selection
+        st.subheader("🤖 AI Provider")
+        provider_options = list(AIClient.PROVIDERS.keys())
+        provider_display = [AIClient.PROVIDERS[p] for p in provider_options]
+
+        selected_provider_display = st.selectbox(
+            "Choose AI Provider",
+            options=provider_display,
+            index=provider_options.index(st.session_state.selected_provider),
+            help="Select the AI provider to use for generation",
+        )
+
+        # Map back to provider key
+        selected_provider = provider_options[
+            provider_display.index(selected_provider_display)
+        ]
+        st.session_state.selected_provider = selected_provider
+
+        # Model selection based on provider
+        st.subheader("🧠 Model Selection")
+        available_models = AIClient.FREE_MODELS[selected_provider]
+
+        if st.session_state.selected_model not in available_models:
+            st.session_state.selected_model = available_models[0]
+
+        selected_model = st.selectbox(
+            "Choose Model (Free Tier)",
+            options=available_models,
+            index=available_models.index(st.session_state.selected_model),
+            help="Select the AI model to use. Only free models are shown.",
+        )
+        st.session_state.selected_model = selected_model
+
+        st.divider()
 
         # API Key configuration section
         st.subheader("🔐 API Key Configuration")
 
-        # Check if environment variable exists
-        has_env_key = bool(os.getenv("GEMINI_API_KEY"))
+        # Check if environment variable exists based on provider
+        if selected_provider == "google":
+            has_env_key = bool(os.getenv("GEMINI_API_KEY"))
+            env_var_name = "GEMINI_API_KEY"
+            provider_name = "Google Gemini"
+            key_link = "[🔗 Get your free Gemini API Key here](https://aistudio.google.com/app/apikey)"
+        else:  # openrouter
+            has_env_key = bool(os.getenv("OPENROUTER_API_KEY"))
+            env_var_name = "OPENROUTER_API_KEY"
+            provider_name = "OpenRouter"
+            key_link = (
+                "[🔗 Get your free OpenRouter API Key here](https://openrouter.ai/keys)"
+            )
 
         col1, col2 = st.columns([2, 1])
 
@@ -116,41 +168,41 @@ def setup_sidebar():
             use_env = st.toggle(
                 "Use Default",
                 value=st.session_state.use_env_api_key,
-                help="Use API key from environment variables",
+                help=f"Use API key from environment variables ({env_var_name})",
             )
             st.session_state.use_env_api_key = use_env
 
         if use_env:
             if has_env_key:
-                st.success("✅ Using API key Default (Limit Request)")
-                api_key = os.getenv("GEMINI_API_KEY")
+                st.success(f"✅ Using {provider_name} API key from environment")
+                api_key = os.getenv(env_var_name)
             else:
-                st.error("❌ GEMINI_API_KEY not found in .env")
+                st.error(f"❌ {env_var_name} not found in environment variables")
                 api_key = None
         else:
             # Manual input
             api_key = st.text_input(
-                "Enter Gemini API Key",
+                f"Enter {provider_name} API Key",
                 type="password",
                 value=st.session_state.manual_api_key,
-                help="Enter your Google Gemini API key.",
+                help=f"Enter your {provider_name} API key.",
                 placeholder="Paste your key here...",
             )
             st.session_state.manual_api_key = api_key
-            st.markdown(
-                "[🔗 Get your free Gemini API Key here](https://aistudio.google.com/app/apikey)"
-            )
+            st.markdown(key_link)
 
         # Initialize client if API key is available
         if api_key:
             try:
-                st.session_state.gemini_client = GeminiClient(api_key)
+                st.session_state.ai_client = AIClient(
+                    provider=selected_provider, model=selected_model, api_key=api_key
+                )
                 if not use_env:
                     st.success("✅ API Key configured")
             except Exception as e:
                 st.error(f"❌ API Key error: {str(e)}")
         else:
-            st.warning("⚠️ Please configure your Gemini API key")
+            st.warning(f"⚠️ Please configure your {provider_name} API key")
 
         st.divider()
 
@@ -207,8 +259,11 @@ def setup_sidebar():
         # Information
         st.subheader("ℹ️ About")
         st.info(
-            """
-        This app uses Google's Gemini AI to generate tailored CVs and cover letters.
+            f"""
+        This app uses AI to generate tailored CVs and cover letters.
+
+        **Current Provider:** {AIClient.PROVIDERS[selected_provider]}
+        **Current Model:** {selected_model}
 
         **Features:**
         - Upload your existing CV
@@ -224,8 +279,8 @@ def main_content():
     st.header("📄 Generate Tailored CV & Cover Letter")
 
     # Check if API key is configured
-    if st.session_state.gemini_client is None:
-        st.warning("⚠️ Please configure your Gemini API key in the sidebar first.")
+    if st.session_state.ai_client is None:
+        st.warning("⚠️ Please configure your API key in the sidebar first.")
         return
 
     # Shared inputs section
@@ -390,7 +445,7 @@ def main_content():
                         template = read_latex_template(str(template_path))
 
                     # Generate CV
-                    latex_code = st.session_state.gemini_client.generate_cv_latex(
+                    latex_code = st.session_state.ai_client.generate_cv_latex(
                         st.session_state.cv_text,
                         job_description,
                         company_name,
@@ -431,7 +486,7 @@ def main_content():
                         full_job_desc = f"Job Title: {job_title}\n\n{job_description}"
 
                     # Generate cover letter
-                    cover_letter = st.session_state.gemini_client.generate_cover_letter(
+                    cover_letter = st.session_state.ai_client.generate_cover_letter(
                         st.session_state.cv_text,
                         full_job_desc,
                         company_name,
